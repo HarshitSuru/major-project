@@ -23,7 +23,7 @@
     "ejs-mate": "^4.0.0",
     "express": "^4.21.2",
     "express-session": "^1.18.1",
-    "foo": "^0.0.7",
+    "foo": "^1.0.0",
     "joi": "^17.13.3",
     "method-override": "^3.0.0",
     "mongo": "^0.1.0",
