@@ -1,0 +1,77 @@
+<% layout('/layouts/boilerplate') -%>
+    <!-- <form method="GET" action="/listings/new">
+        <button>New Post</button>
+    </form> -->
+    <div class="filters">
+        <div class="filter">
+            <div><i class="fa-solid fa-fire"></i></div>
+            <p>Trending</p>
+        </div>
+        <div class="filter">
+            <div><i class="fa-solid fa-mountain-sun"></i></div>
+            <p>Mountains</p>
+        </div>
+        <div class="filter">
+            <div><i class="fa-solid fa-umbrella-beach"></i></i></div>
+            <p>Beaches</p>
+        </div>
+        <div class="filter">
+            <div><i class="fa-solid fa-bed"></i></div>
+            <p>Rooms</p>
+        </div>
+        <div class="filter">
+            <div><i class="fa-solid fa-mountain-city"></i></i></div>
+            <p>Smart cities</p>
+        </div>
+        <div class="filter">
+            <div><i class="fa-solid fa-tractor"></i></div>
+            <p>Farms</p>
+        </div>
+        <div class="filter">
+            <div><i class="fa-solid fa-person-hiking"></i></i></div>
+            <p>Hiking</p>
+        </div>
+        <div class="toggle-switch">
+            <div class="form-check-reverse form-switch " style="margin-top: 0.8rem;">
+                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+                <label class="form-check-label" for="flexSwitchCheckDefault">Display total after taxes</label>
+              </div>
+        </div>
+    </div>
+<div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1">
+    <% for(let listing of allListings) { %>
+        <div class="col">
+            <div class="card index-card " style="width: 23rem;">
+                <a href="/listings/<%= listing._id %>" class="listing-link">
+                    <div class="card-img-overlay">=</div>
+                    <img src="<%= listing.image.url %>" class="card-img-top" alt="listings_image" style="height: 20rem;">
+                <div class="card-body">
+                    <h5 class="card-title"><%= listing.title %></h5>
+                    <p class="card-text price" data-base-price="<%= listing.price %>">
+                        &#8377; <%= listing.price.toLocaleString("en-IN") %>/night
+                      </p>
+                      
+                </div>
+                </a>
+            </div>
+        </div>
+    <% } %>
+</div>
+
+
+<script>
+let checkBox = document.getElementById('flexSwitchCheckDefault');
+checkBox.addEventListener("click", () => {
+
+    let priceElements = document.querySelectorAll('.card-text.price');
+    priceElements.forEach((el) => {
+        let basePrice = parseFloat(el.getAttribute('data-base-price'));
+        if( checkBox.checked){
+            el.innerHTML = `&#8377; ${Math.round(basePrice * 1.18).toLocaleString("en-IN")}/night     (including taxes - 18%)`;
+        }else{
+            el.innerHTML = `&#8377; ${Math.round(basePrice).toLocaleString("en-IN")}/night`;
+        }
+        
+    });
+});
+</script>
