@@ -3,25 +3,31 @@
     <h1 class="row col-6 offset-5">Login!</h1>
     <div class="row col-6 offset-3">
         <form action="/login" method="POST">
-            <div class="mb-3 ">
-                <label for="username" class="form-label" class="needs-validation" novalidate>Username</label>
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
                 <input class="form-control"
-                name="username"
-                id="username"
-                placeholder="enter the username"
-                type="text" 
-                required>
+                    name="username"
+                    id="username"
+                    placeholder="Enter your username"
+                    type="text" 
+                    required>
             </div>
-            <div class="mb-3 ">
-                <label for="password" class="form-label" class="needs-validation" novalidate>Password</label>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
                 <input class="form-control"
-                name="password"
-                id="password"
-                placeholder="enter the password"
-                type="password" 
-                required>
+                    name="password"
+                    id="password"
+                    placeholder="Enter your password"
+                    type="password" 
+                    required>
             </div>
-            <button class="btn btn-success">Login</button>
+
+            <div class="mb-3 text-end">
+                <a href="/forgot-password" class="link-primary">Forgot your password?</a>
+            </div>
+
+            <button class="btn btn-success w-100">Login</button>
         </form>
     </div>
 </div>

@@ -3,25 +3,41 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 const express = require("express");
-const app = express();
 const mongoose = require("mongoose");
 const path = require("path");
+const app = express();
 const methodOverride = require("method-override");
-const { redirect } = require("express/lib/response.js");
 const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
-const { wrap } = require("module");
 const session = require("express-session");
 const MongoStore = require('connect-mongo');
 const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const user = require("./models/user.js");
-
+const { redirect } = require("express/lib/response.js");
+const { wrap } = require("module");
+const { connect } = require("http2");
 
 const listingsRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
+
+
+
+
+
+
+const dbUrl = process.env.ATLASDB_URL;
+main()
+    .then(() => console.log("connected to db"))
+    .catch(err => console.log(err));
+
+async function main() {
+    await mongoose.connect(dbUrl);
+}
+
+
 
 
 app.set("view engine", "ejs");
@@ -30,7 +46,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
-const dbUrl = process.env.ATLASDB_URL;
 
 
 const store = MongoStore.create({
@@ -42,7 +57,7 @@ const store = MongoStore.create({
 })
 
 store.on("error", () => {
-    console.log("session store error", e);
+    console.log("session store error", err);
 })
 
 const sessionOptions = {
@@ -59,13 +74,11 @@ const sessionOptions = {
 
 
 
-
 app.use(session(sessionOptions));
 app.use(flash());
 
 app.use(passport.initialize());
 app.use(passport.session());
-
 
 passport.use(new LocalStrategy(user.authenticate()));
 passport.serializeUser(user.serializeUser());
@@ -78,34 +91,11 @@ app.use((req, res, next) => {
     next();
 })
 
-// app.get("/", (req, res) => {
-//     res.send("Hi this is root");
-// })
-
-
-app.get("/demoUser", async (req, res) => {
-    let fakeUser = new user({
-        email: "harshitsuru@gmail.com",
-        username: "delta-student"
-    })
-    let registeredUser = await user.register(fakeUser, "helloworld");
-    console.log(registeredUser);
-
-})
-
 app.use("/listings", listingsRouter);
 app.use("/listings/:id/reviews", reviewRouter);
 app.use("/", userRouter);
 
 
-
-main()
-    .then(() => console.log("connected to db"))
-    .catch(err => console.log(err));
-
-async function main() {
-    await mongoose.connect(dbUrl);
-}
 
 
 
