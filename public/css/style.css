@@ -10,7 +10,11 @@ body {
 }
 
 .navbar {
-    height: 5rem;
+    /* height: 5rem; */
+    min-height: 5rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    /* padding: 0.5rem 1rem; */
     background-color: beige;
 }
 
@@ -118,8 +122,13 @@ body {
     margin: 0.5rem;
     margin-bottom: 2rem;
     box-shadow: 0 6px 12px rgba(139, 69, 19, 0.15), 0 10px 20px rgba(139, 69, 19, 0.1);
+
 }
 
+.index-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(139, 69, 19, 0.25), 0 16px 32px rgba(139, 69, 19, 0.2);
+}
 
 .card-img-overlay {
     opacity: 0;
@@ -150,9 +159,6 @@ body {
 }
 
 
-
-
-
 .listing-link {
     text-decoration: none;
     color: inherit;
@@ -173,9 +179,6 @@ body {
     object-fit: cover;
 }
 
-
-
-
 .btns {
     display: flex;
 }
@@ -194,12 +197,20 @@ body {
     margin-top: 1rem;
     display: flex;
     flex-wrap: nowrap;
+    overflow-x: auto;
+    margin-bottom: 0.5rem;
+    -ms-overflow-style: none;
 }
 
 .filter {
     text-align: center;
     margin-right: 2rem;
     opacity: 0.7;
+    padding-top: 0.3rem;
+}
+
+.filters::-webkit-scrollbar {
+    display: none;
 }
 
 .filter:hover {
@@ -207,12 +218,18 @@ body {
     cursor: pointer;
 }
 
+
 .toggle-switch {
-    border: 2px solid #585858;
-    border-radius: 2rem;
-    height: 3.5rem;
-    width: 18rem;
     margin-left: 7rem;
     padding-left: 2rem;
+    flex: 0 0 auto;
     display: flex;
+    font-size: large;
+    /* align-items: center;
+    justify-content: center; */
+}
+
+.toggle-switch :hover {
+    cursor: pointer;
+    color: #e15623;
 }

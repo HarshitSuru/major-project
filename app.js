@@ -25,9 +25,6 @@ const userRouter = require("./routes/user.js");
 
 
 
-
-
-
 const dbUrl = process.env.ATLASDB_URL;
 main()
     .then(() => console.log("connected to db"))
@@ -96,9 +93,6 @@ app.use("/listings/:id/reviews", reviewRouter);
 app.use("/", userRouter);
 
 
-
-
-
 app.all("*", (req, res, next) => {
     next(new ExpressError(404, "Page not found"));
 })
@@ -108,8 +102,6 @@ app.use((err, req, res, next) => {
     res.status(statusCode).render("error.ejs", { err });
     // res.status(statusCode).send(message);
 })
-
-
 
 
 app.listen(8080, () => {

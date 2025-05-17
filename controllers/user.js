@@ -1,26 +1,105 @@
 const User = require("../models/user.js");
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
+const { generateOTP, sendOTP } = require("../utils/generateOtp.js");
+const otpStore = {}; // temporary store for dev
 
 module.exports.signupForm = (req, res) => {
     res.render("users/signup.ejs");
 }
 
 module.exports.createUser = async (req, res) => {
+    const { username, email } = req.body;  // **No password here**
     try {
-        let { username, email, password } = req.body;
-        const newUser = new User({ email, username });
-        const registeredUser = await User.register(newUser, password);
-        req.login(registeredUser, (err) => {
-            if (err) return next(err);
-            req.flash("success", "Successfully registered, welcome to Wanderlust!");
-            res.redirect("/listings");
+        const existingUser = await User.findOne({
+            $or: [{ username }, { email }]
         });
+
+        if (existingUser) {
+            if (existingUser.username === username) {
+                req.flash("error", "Username is already taken.");
+            } else if (existingUser.email === email) {
+                req.flash("error", "Email is already registered.");
+            } else {
+                req.flash("error", "User already exists.");
+            }
+            return res.redirect("/signup");
+        }
+
+        const otp = generateOTP();
+        const otpExpiry = Date.now() + 10 * 60 * 1000; // 10 minutes
+        otpStore[email] = {
+            otp,
+            expiry: otpExpiry,
+            userData: { username, email }
+        };
+
+        await sendOTP(email, otp);
+
+        req.flash("success", "OTP sent to your email. Please verify and set your password.");
+        return res.redirect(`/otp?email=${encodeURIComponent(email)}`);
+
     } catch (err) {
-        req.flash("error", err.message);
+        console.error(err);
+        req.flash("error", "Error while sending OTP.");
+        return res.redirect("/signup");
+    }
+};
+module.exports.otpform = (req, res) => {
+    const { email } = req.query;
+    if (!email) {
+        req.flash("error", "Invalid access to OTP verification.");
+        return res.redirect("/signup");
+    }
+    res.render("users/otp", { email, error: null, success: null });
+};
+module.exports.verifyOtp = async (req, res, next) => {
+    const { email, otp, password, confirmPassword } = req.body;
+
+    if (!otpStore[email]) {
+        req.flash("error", "OTP expired or invalid. Please signup again.");
+        return res.redirect("/signup");
+    }
+
+    const record = otpStore[email];
+
+    if (Date.now() > record.expiry) {
+        delete otpStore[email];
+        req.flash("error", "OTP expired. Please signup again.");
+        return res.redirect("/signup");
+    }
+
+    if (otp !== record.otp) {
+        return res.render("users/otp", { email, error: "Invalid OTP. Try again.", success: null });
+    }
+    if (!password || !confirmPassword) {
+        return res.render("users/otp", { email, error: "Please enter password and confirm password.", success: null });
+    }
+    if (password !== confirmPassword) {
+        return res.render("users/otp", { email, error: "Passwords do not match.", success: null });
+    }
+
+    try {
+        // Create new user now that OTP is verified and password confirmed
+        const newUser = new User(record.userData);
+        await User.register(newUser, password);
+
+        delete otpStore[email]; // clear otpStore
+
+        req.login(newUser, (err) => {
+            if (err) return next(err);
+            req.flash("success", "Welcome! Signup complete.");
+            return res.redirect("/listings");
+        });
+
+    } catch (err) {
+        console.error(err);
+        req.flash("error", "Error creating user.");
         res.redirect("/signup");
     }
-}
+};
+
+
 
 module.exports.loginForm = (req, res) => {
     res.render("users/login.ejs");
