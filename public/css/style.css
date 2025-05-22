@@ -19,54 +19,6 @@ body {
 }
 
 
-.search-bar {
-    padding: 0.5rem 1rem;
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-.search-input {
-    border-radius: 3.25rem !important;
-    border: 2px solid #f8e8d0;
-    background-color: rgba(255, 255, 255, 0.9);
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
-    color: #5a4a42;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-}
-
-.search-input:focus {
-    outline: none;
-    border-color: #e0b890;
-    box-shadow: 0 2px 12px rgba(234, 153, 81, 0.2);
-    background-color: white;
-}
-
-.search-input::placeholder {
-    color: #b0a090;
-}
-
-.search-btn {
-    border-radius: 3.25rem !important;
-    background-color: #e67a54 !important;
-    color: white !important;
-    border: none;
-    padding: 0.75rem 1.75rem;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.search-btn:hover {
-    background-color: #d45d3a !important;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(234, 153, 81, 0.3);
-}
-
-.search-btn:active {
-    transform: translateY(0);
-}
 
 
 .fa-compass {
@@ -148,7 +100,7 @@ body {
 
 
 .card-title {
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: bold;
     color: #8b4513;
 }
@@ -219,17 +171,47 @@ body {
 }
 
 
-.toggle-switch {
-    margin-left: 7rem;
-    padding-left: 2rem;
-    flex: 0 0 auto;
+.filters-bar {
     display: flex;
-    font-size: large;
-    /* align-items: center;
-    justify-content: center; */
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+    margin-top: 1rem;
 }
 
-.toggle-switch :hover {
+.filters-left {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 1.1rem;
+    color: #4a3f35;
+}
+
+.toggle-switch {
+    background-color: transparent;
+    color: #4a4a4a;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 0.8rem;
+    font-size: 1rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    transition: background 0.2s ease;
+    white-space: nowrap;
+    margin-bottom: 0.5rem;
     cursor: pointer;
-    color: #e15623;
+}
+
+
+
+.toggle-switch:hover {
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.form-switch {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
 }

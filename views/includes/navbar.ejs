@@ -1,14 +1,59 @@
+<style>
+  /* Search Button */
+  .btn-search {
+    background-color: #f08c5a;
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    padding: 0.6rem 1.4rem;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .btn-search:hover {
+    background-color: #fff;
+    color: #f08c5a;
+    border: 2px solid #f08c5a;
+    box-shadow: 0 2px 12px rgba(234, 153, 81, 0.2);
+  }
+
+  /* Icon inside search button */
+  .btn-search i {
+    margin-right: 0.5rem;
+    font-size: 1rem;
+  }
+
+  /* Search Input */
+  .search-input {
+    border-radius: 25px;
+    border: 2px solid #f8e8d0;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #5a4a42;
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s ease-in-out;
+  }
+
+  .search-input:focus {
+    border-color: #f08c5a;
+    box-shadow: 0 0 0 2px rgba(240, 140, 90, 0.2);
+  }
+</style>
 <nav class="navbar navbar-expand-lg bg-body-light sticky-top">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="/listings"><i class="fa-regular fa-compass"></i></a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <div class="navbar-nav">
-          <a class="nav-link" href="/listings">Explore</a>
-        </div>
-        <!-- <nav class="navbar search-bar ms-auto" style="background-color: transparent;">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/listings"><i class="fa-regular fa-compass"></i></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-link" href="/listings">Explore</a>
+      </div>
+      <!-- <nav class="navbar search-bar ms-auto" style="background-color: transparent;">
           <div class="container-fluid">
             <form class="d-flex w-100" role="search">
               <input class="form-control me-2 search-input" type="search" placeholder="Find your perfect stay..." aria-label="Search">
@@ -16,18 +61,24 @@
             </form>
           </div>
         </nav> -->
-        
-        
-        
-        <div class="navbar-nav ms-auto">
-          <a class="nav-link" href="/listings/new">List your home</a> 
-          <% if(currUser) { %>
-            <a class="nav-link" href="/logout"><b>Logout</b></a>
+      <div class="navbar-nav ms-auto">
+        <form class="d-flex" role="search" method="GET" action="/listings/search">
+          <input class="form-control me-2 search-input" type="search" name="q" placeholder="Find your perfect stay..."
+            aria-label="Search">
+          <button class="btn btn-search" type="submit"><i class="fa-solid fa-magnifying-glass"></i>Search</button>
+        </form>
+      </div>
+
+
+      <div class="navbar-nav ms-auto">
+        <a class="nav-link" href="/listings/new">List your home</a>
+        <% if(currUser) { %>
+          <a class="nav-link" href="/logout"><b>Logout</b></a>
           <% } if(!currUser) { %>
             <a class="nav-link" href="/signup"><b>Signup</b></a>
             <a class="nav-link" href="/login"><b>Login</b></a>
-          <% } %>
-        </div>
+            <% } %>
       </div>
     </div>
-  </nav>
+  </div>
+</nav>

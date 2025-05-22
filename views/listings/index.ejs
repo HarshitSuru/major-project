@@ -2,76 +2,496 @@
     <!-- <form method="GET" action="/listings/new">
         <button>New Post</button>
     </form> -->
-    <div class="filters">
-        <div class="filter">
-            <div><i class="fa-solid fa-fire"></i></div>
-            <p>Trending</p>
-        </div>
-        <div class="filter">
-            <div><i class="fa-solid fa-mountain-sun"></i></div>
-            <p>Mountains</p>
-        </div>
-        <div class="filter">
-            <div><i class="fa-solid fa-umbrella-beach"></i></i></div>
-            <p>Beaches</p>
-        </div>
-        <div class="filter">
-            <div><i class="fa-solid fa-bed"></i></div>
-            <p>Rooms</p>
-        </div>
-        <div class="filter">
-            <div><i class="fa-solid fa-mountain-city"></i></i></div>
-            <p>Smart cities</p>
-        </div>
-        <div class="filter">
-            <div><i class="fa-solid fa-tractor"></i></div>
-            <p>Farms</p>
-        </div>
-        <div class="filter">
-            <div><i class="fa-solid fa-person-hiking"></i></i></div>
-            <p>Hiking</p>
-        </div>
-        <div class="toggle-switch">
-            <div class="form-check-reverse form-switch " style="margin-top: 0.8rem;">
-                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
-                <label class="form-check-label" for="flexSwitchCheckDefault">Display total after taxes</label>
-              </div>
-        </div>
-    </div>
-<div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1">
-    <% for(let listing of allListings) { %>
-        <div class="col">
-            <div class="card index-card " >
-                <a href="/listings/<%= listing._id %>" class="listing-link">
-                    <div class="card-img-overlay"></div>
-                    <img src="<%= listing.image.url %>" class="card-img-top" alt="listings_image" style="height: 20rem;">
-                <div class="card-body">
-                    <h5 class="card-title"><%= listing.title %></h5>
-                    <p class="card-text price" data-base-price="<%= listing.price %>">
-                        &#8377; <%= listing.price.toLocaleString("en-IN") %>/night
-                      </p>
-                      
-                </div>
-                </a>
-            </div>
-        </div>
-    <% } %>
-</div>
-
-
-<script>
-let checkBox = document.getElementById('flexSwitchCheckDefault');
-checkBox.addEventListener("click", () => {
-
-    let priceElements = document.querySelectorAll('.card-text.price');
-    priceElements.forEach((el) => {
-        let basePrice = parseFloat(el.getAttribute('data-base-price'));
-        if( checkBox.checked){
-            el.innerHTML = `&#8377; ${Math.round(basePrice * 1.18).toLocaleString("en-IN")}/night     (including taxes - 18%)`;
-        }else{
-            el.innerHTML = `&#8377; ${Math.round(basePrice).toLocaleString("en-IN")}/night`;
+    <style>
+        /* Style for filter links to remove default underline and color */
+        .filter-link {
+            text-decoration: none;
+            color: inherit;
         }
-        
-    });
-});
-</script>
+
+        .filter-link:hover .filter,
+        .filter-link.active .filter {
+            /* Style for active filter */
+            opacity: 1;
+            /* border-bottom: 2px solid #222222; */
+            /* Example active style */
+        }
+
+        .filters {
+            display: flex;
+            align-items: center;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding: 0.5rem 0;
+        }
+
+        /* Price filter styling - dropdown style */
+        .price-filter-container {
+            position: relative;
+            margin-left: 15px;
+            margin-right: 15px;
+            margin-bottom: 0.5rem;
+            white-space: nowrap;
+        }
+
+        .price-filter-btn {
+            background-color: transparent;
+            color: #4a4a4a;
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 0.8rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: background 0.2s ease;
+            white-space: nowrap;
+        }
+
+
+        .price-filter-btn:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .price-filter-btn::after {
+            content: "";
+            display: inline-block;
+            margin-left: 8px;
+            border-top: 5px solid #4a4a4a;
+            border-right: 5px solid transparent;
+            border-left: 5px solid transparent;
+        }
+
+        .price-filter-btn i {
+            margin-right: 5px;
+        }
+
+        /* Dropdown content */
+        .price-dropdown {
+            position: fixed;
+            top: auto;
+            left: auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            z-index: 9999;
+            padding: 15px;
+            display: none;
+            border: 1px solid #eee;
+        }
+
+        .price-dropdown.show {
+            display: block;
+            animation: fadeIn 0.2s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .price-dropdown h6 {
+            margin-bottom: 15px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        /* Slider styling */
+        .slider-group {
+            margin: 15px 0;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            background: #eee;
+            border-radius: 5px;
+            background-image: linear-gradient(#007bff, #007bff);
+            background-repeat: no-repeat;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 18px;
+            width: 18px;
+            border-radius: 50%;
+            background: #007bff;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="range"]::-webkit-slider-runnable-track {
+            -webkit-appearance: none;
+            box-shadow: none;
+            border: none;
+            background: transparent;
+        }
+
+        /* Current price display */
+        .current-range {
+            text-align: center;
+            margin: 15px 0;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Dropdown buttons */
+        .dropdown-buttons {
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-apply {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .btn-apply:hover {
+            background-color: #0069d9;
+        }
+
+        .btn-clear {
+            background-color: transparent;
+            color: #777;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+        }
+
+        .btn-clear:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* Clear filter button when shown in filters bar */
+        .clear-filter-btn {
+            margin-left: 5px;
+            padding: 5px 10px;
+            font-size: 0.9rem;
+            border-radius: 5px;
+            color: #777;
+            border: 1px solid #ddd;
+            background-color: transparent;
+        }
+
+        .clear-filter-btn:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
+
+    <div class="filters">
+        <!-- Category Filters -->
+        <a href="/listings?category=Trending" class="filter-link <%= currentCategory === 'Trending' ? 'active' : '' %>">
+            <div class="filter">
+                <div><i class="fa-solid fa-fire"></i></div>
+                <p>Trending</p>
+            </div>
+        </a>
+        <a href="/listings?category=Mountains"
+            class="filter-link <%= currentCategory === 'Mountains' ? 'active' : '' %>">
+            <div class="filter">
+                <div><i class="fa-solid fa-mountain-sun"></i></div>
+                <p>Mountains</p>
+            </div>
+        </a>
+        <a href="/listings?category=Beaches" class="filter-link <%= currentCategory === 'Beaches' ? 'active' : '' %>">
+            <div class="filter">
+                <div><i class="fa-solid fa-umbrella-beach"></i></i></div>
+                <p>Beaches</p>
+            </div>
+        </a>
+        <a href="/listings?category=Rooms" class="filter-link <%= currentCategory === 'Rooms' ? 'active' : '' %>">
+            <div class="filter">
+                <div><i class="fa-solid fa-bed"></i></div>
+                <p>Rooms</p>
+            </div>
+        </a>
+        <a href="/listings?category=Smart cities"
+            class="filter-link <%= currentCategory === 'Smart cities' ? 'active' : '' %>">
+            <div class="filter">
+                <div><i class="fa-solid fa-mountain-city"></i></i></div>
+                <p>Smart cities</p>
+            </div>
+        </a>
+        <a href="/listings?category=Farms" class="filter-link <%= currentCategory === 'Farms' ? 'active' : '' %>">
+            <div class="filter">
+                <div><i class="fa-solid fa-tractor"></i></div>
+                <p>Farms</p>
+            </div>
+        </a>
+        <a href="/listings?category=Hiking" class="filter-link <%= currentCategory === 'Hiking' ? 'active' : '' %>">
+            <div class="filter">
+                <div><i class="fa-solid fa-person-hiking"></i></i></div>
+                <p>Hiking</p>
+            </div>
+        </a>
+
+        <!-- Price Filter Dropdown -->
+        <div class="price-filter-container">
+            <button id="priceFilterBtn" class="price-filter-btn">
+                <!-- <i class="fa-solid fa-indian-rupee-sign"></i> -->
+                ₹ Price Range
+            </button>
+
+            <div id="priceDropdown" class="price-dropdown">
+                <h6>Set Price Range (₹)</h6>
+
+                <div class="slider-group">
+                    <div class="slider-label">
+                        <span>Min:</span>
+                        <span id="minValueDisplay">₹<%= Number(locals.currentMinPrice || 0).toLocaleString('en-IN') %>
+                        </span>
+                    </div>
+                    <input type="range" id="minPriceSlider" min="0" max="100000" step="1000"
+                        value="<%= locals.currentMinPrice || 0 %>">
+                </div>
+
+                <div class="slider-group">
+                    <div class="slider-label">
+                        <span>Max:</span>
+                        <span id="maxValueDisplay">₹<%= Number(locals.currentMaxPrice || 50000).toLocaleString('en-IN')
+                                %></span>
+                    </div>
+                    <input type="range" id="maxPriceSlider" min="0" max="100000" step="1000"
+                        value="<%= locals.currentMaxPrice || 50000 %>">
+                </div>
+
+                <div class="current-range">
+                    Current: ₹<span id="currentMinDisplay">
+                        <%= Number(locals.currentMinPrice || 0).toLocaleString('en-IN') %>
+                    </span> - ₹<span id="currentMaxDisplay">
+                        <%= Number(locals.currentMaxPrice || 50000).toLocaleString('en-IN') %>
+                    </span>
+                </div>
+
+                <div class="dropdown-buttons">
+                    <button class="btn-apply" id="applyPriceFilter">Apply Price</button>
+                    <button class="btn-clear" id="clearPriceFilterDropdown">Clear All Filters</button>
+                </div>
+            </div>
+
+
+        </div>
+
+        <!-- Clear Price Filter Button (only shown if filters are active) -->
+        <% if (locals.currentMinPrice || locals.currentMaxPrice) { %>
+            <button id="clearPriceFilterBtn" class="clear-filter-btn">
+                <i class="fa-solid fa-times"></i> Clear
+            </button>
+            <% } %>
+
+                <div class="toggle-switch"
+                    style="white-space: nowrap; margin-left: 15px; display: inline-flex; align-items: center;">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+                        <label class="form-check-label" for="flexSwitchCheckDefault">Display total after taxes</label>
+                    </div>
+                </div>
+
+    </div>
+
+    <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-3">
+        <% for(let listing of allListings) { %>
+            <div class="col">
+                <div class="card index-card ">
+                    <a href="/listings/<%= listing._id %>" class="listing-link">
+                        <div class="card-img-overlay"></div>
+                        <img src="<%= listing.image.url %>" class="card-img-top" alt="listings_image"
+                            style="height: 20rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <%= listing.title %>
+                            </h5>
+                            <p class="card-text price" data-base-price="<%= listing.price %>">
+                                &#8377; <%= listing.price.toLocaleString("en-IN") %>/night
+                            </p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <% } %>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Dropdown toggle functionality
+            const priceFilterBtn = document.getElementById('priceFilterBtn');
+            const priceDropdown = document.getElementById('priceDropdown');
+
+            // Toggle dropdown when price filter button is clicked
+            priceFilterBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                priceDropdown.classList.toggle('show');
+
+                // Position the dropdown relative to the button
+                if (priceDropdown.classList.contains('show')) {
+                    const rect = priceFilterBtn.getBoundingClientRect();
+                    priceDropdown.style.top = (rect.bottom + window.scrollY) + 'px';
+                    priceDropdown.style.left = rect.left + 'px';
+
+                    // Ensure the dropdown doesn't go off-screen
+                    const dropdownRect = priceDropdown.getBoundingClientRect();
+                    const windowWidth = window.innerWidth;
+                    if (dropdownRect.right > windowWidth) {
+                        priceDropdown.style.left = (windowWidth - dropdownRect.width - 10) + 'px';
+                    }
+                }
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function (e) {
+                if (!priceDropdown.contains(e.target) && e.target !== priceFilterBtn) {
+                    priceDropdown.classList.remove('show');
+                }
+            });
+
+            // Prevent dropdown from closing when clicking inside it
+            priceDropdown.addEventListener('click', function (e) {
+                e.stopPropagation();
+            });
+
+            // Slider functionality
+            const minSlider = document.getElementById('minPriceSlider');
+            const maxSlider = document.getElementById('maxPriceSlider');
+            const minValueDisplay = document.getElementById('minValueDisplay');
+            const maxValueDisplay = document.getElementById('maxValueDisplay');
+            const currentMinDisplay = document.getElementById('currentMinDisplay');
+            const currentMaxDisplay = document.getElementById('currentMaxDisplay');
+
+            // Initialize min slider
+            minSlider.addEventListener('input', function () {
+                const minValue = parseInt(this.value);
+                const maxValue = parseInt(maxSlider.value);
+
+                // Ensure min doesn't exceed max
+                if (minValue >= maxValue) {
+                    this.value = maxValue;
+                }
+
+                // Update display
+                minValueDisplay.textContent = '₹' + Number(this.value).toLocaleString('en-IN');
+                currentMinDisplay.textContent = Number(this.value).toLocaleString('en-IN');
+
+                // Update slider fill (background)
+                const percent = (this.value - this.min) / (this.max - this.min) * 100;
+                this.style.backgroundSize = `${percent}% 100%`;
+            });
+
+            // Initialize max slider
+            maxSlider.addEventListener('input', function () {
+                const maxValue = parseInt(this.value);
+                const minValue = parseInt(minSlider.value);
+
+                // Ensure max isn't less than min
+                if (maxValue <= minValue) {
+                    this.value = minValue;
+                }
+
+                // Update display
+                maxValueDisplay.textContent = '₹' + Number(this.value).toLocaleString('en-IN');
+                currentMaxDisplay.textContent = Number(this.value).toLocaleString('en-IN');
+
+                // Update slider fill (background)
+                const percent = (this.value - this.min) / (this.max - this.min) * 100;
+                this.style.backgroundSize = `${percent}% 100%`;
+            });
+
+            // Initial update of slider fills
+            minSlider.style.backgroundSize = `${(minSlider.value - minSlider.min) / (minSlider.max - minSlider.min) * 100}% 100%`;
+            maxSlider.style.backgroundSize = `${(maxSlider.value - maxSlider.min) / (maxSlider.max - maxSlider.min) * 100}% 100%`;
+
+            // Apply filter button in dropdown
+            document.getElementById('applyPriceFilter').addEventListener('click', function () {
+                window.location.href = buildFilterUrl({
+                    minPrice: minSlider.value,
+                    maxPrice: maxSlider.value
+                });
+            });
+
+            // Clear button in dropdown
+            document.getElementById('clearPriceFilterDropdown').addEventListener('click', function () {
+                window.location.href = buildFilterUrl({
+                    minPrice: null,
+                    maxPrice: null,
+                    category: null // Also clear category filters as per the button label "Clear All Filters"
+                });
+            });
+
+            // Clear filter button in filter bar
+            const clearFilterBtn = document.getElementById('clearPriceFilterBtn');
+            if (clearFilterBtn) {
+                clearFilterBtn.addEventListener('click', function () {
+                    window.location.href = buildFilterUrl({
+                        minPrice: null,
+                        maxPrice: null
+                    });
+                });
+            }
+        });
+
+        // Helper function to build URL with category and price parameters
+        function buildFilterUrl(params) {
+            const url = new URL(window.location.origin + "/listings");
+            const currentParams = new URLSearchParams(window.location.search);
+
+            // Keep the category parameter if it exists and if not explicitly set to null in params
+            if (params.category !== null && currentParams.has('category')) {
+                url.searchParams.set('category', currentParams.get('category'));
+            }
+
+            // Add or remove price parameters
+            for (const key in params) {
+                if (key === 'category') continue; // Already handled above
+                if (params[key] !== undefined && params[key] !== null) {
+                    url.searchParams.set(key, params[key]);
+                } else {
+                    url.searchParams.delete(key);
+                }
+            }
+
+            return url.toString();
+        }
+
+        // Tax toggle functionality
+        let checkBox = document.getElementById('flexSwitchCheckDefault');
+        checkBox.addEventListener("click", () => {
+            let priceElements = document.querySelectorAll('.card-text.price');
+            priceElements.forEach((el) => {
+                let basePrice = parseFloat(el.getAttribute('data-base-price'));
+                if (checkBox.checked) {
+                    el.innerHTML = `&#8377; ${Math.round(basePrice * 1.18).toLocaleString("en-IN")}/night     (including taxes - 18%)`;
+                } else {
+                    el.innerHTML = `&#8377; ${Math.round(basePrice).toLocaleString("en-IN")}/night`;
+                }
+            });
+        });
+    </script>

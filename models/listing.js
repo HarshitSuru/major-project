@@ -30,6 +30,9 @@ const listingSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "User"
     },
+    category: {
+        type: String,
+    },
     geometry: {
         type: {
             type: String, // Don't do `{ location: { type: String } }`

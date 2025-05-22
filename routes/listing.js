@@ -18,6 +18,9 @@ router.route("/")
     .get(wrapAsync(listingController.index))
     .post(isLoggedIn, upload.single('listing[image]'), validateListing, wrapAsync(listingController.createListing));
 
+// Search route - should be defined before routes with /:id
+router.get("/search", wrapAsync(listingController.searchListings));
+
 //add new listings new route rendering
 router.get("/new", listingController.renderNewListing);
 

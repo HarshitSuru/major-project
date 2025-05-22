@@ -1,0 +1,53 @@
+<% layout('/layouts/boilerplate') -%>
+
+    <div class="row mt-3">
+        <div class="col-12">
+            <h3>Search Results for "<%= query %>"</h3>
+            <% if (listings && listings.length> 0) { %>
+                <p>
+                    <%= listings.length %> listing(s) found.
+                </p>
+                <% } %>
+        </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-3 mt-3">
+        <% if (listings && listings.length> 0) { %>
+            <% for(let listing of listings) { %>
+                <div class="col mb-3">
+                    <div class="card index-card h-100">
+                        <a href="/listings/<%= listing._id %>" class="listing-link">
+                            <% if(listing.image && listing.image.url) { %>
+                                <img src="<%= listing.image.url %>" class="card-img-top" alt="<%= listing.title %>"
+                                    style="height: 20rem; object-fit: cover;">
+                                <% } else { %>
+                                    <!-- Placeholder if no image -->
+                                    <img src="https://via.placeholder.com/300x200.png?text=No+Image"
+                                        class="card-img-top" alt="No image available"
+                                        style="height: 20rem; object-fit: cover;">
+                                    <% } %>
+                                        <div class="card-body">
+                                            <h5 class="card-title">
+                                                <%= listing.title %>
+                                            </h5>
+                                            <p class="card-text">
+                                                &#8377; <%= listing.price ? listing.price.toLocaleString("en-IN")
+                                                    : 'N/A' %>/night
+                                            </p>
+                                            <p class="card-text"><small class="text-muted">
+                                                    <%= listing.location %>, <%= listing.country %>
+                                                </small></p>
+                                        </div>
+                        </a>
+                    </div>
+                </div>
+                <% } %>
+                    <% } else { %>
+                        <div class="col-12">
+                            <div class="alert alert-warning" role="alert">
+                                No listings found matching your search criteria: "<%= query %>". Try a different search
+                                    term or <a href="/listings">explore all listings</a>.
+                            </div>
+                        </div>
+                        <% } %>
+    </div>
