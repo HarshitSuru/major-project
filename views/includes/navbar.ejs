@@ -42,16 +42,26 @@
     border-color: #f08c5a;
     box-shadow: 0 0 0 2px rgba(240, 140, 90, 0.2);
   }
+
+  .custom-icon-png {
+    width: 50px;
+    border-radius: 50%;
+    height: 50px;
+    vertical-align: middle;
+  }
 </style>
 <nav class="navbar navbar-expand-lg bg-body-light sticky-top">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/listings"><i class="fa-regular fa-compass"></i></a>
+    <!-- <i class="fa-regular fa-compass"></i> -->
+    <a class="navbar-brand" href="/listings">
+      <img src="/assets/477b0cf0-8dc4-415e-bf61-004b05266aad.png" alt="TripNest" class="custom-icon-png">
+    </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        <a class="nav-link" href="/listings">Explore</a>
+        <a class="nav-link" href="/listings" style="font-size: 1.2rem;">Explore</a>
       </div>
       <!-- <nav class="navbar search-bar ms-auto" style="background-color: transparent;">
           <div class="container-fluid">
@@ -71,12 +81,12 @@
 
 
       <div class="navbar-nav ms-auto">
-        <a class="nav-link" href="/listings/new">List your home</a>
+        <a class="nav-link" href="/listings/new" style="font-size: 1.2rem;">List your home</a>
         <% if(currUser) { %>
-          <a class="nav-link" href="/logout"><b>Logout</b></a>
+          <a class="nav-link" href="/logout" style="font-size: 1.2rem;"><b>Logout</b></a>
           <% } if(!currUser) { %>
-            <a class="nav-link" href="/signup"><b>Signup</b></a>
-            <a class="nav-link" href="/login"><b>Login</b></a>
+            <a class="nav-link" href="/signup" style="font-size: 1.2rem;"><b>Signup</b></a>
+            <a class="nav-link" href="/login" style="font-size: 1.2rem;"><b>Login</b></a>
             <% } %>
       </div>
     </div>

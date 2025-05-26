@@ -106,7 +106,7 @@ module.exports.loginForm = (req, res) => {
 }
 
 module.exports.loginUser = async (req, res) => {
-    req.flash("success", "Welcome to WANDERLUST! you are logged in!!");
+    req.flash("success", "Welcome to TripNest! you are logged in!!");
     res.redirect(res.locals.redirectURL || "/listings");
 }
 

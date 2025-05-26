@@ -1,6 +1,6 @@
-# 🌍 Wanderlust
+# 🌍 TripNest
 
-**Wanderlust** is a full-stack travel platform where users can discover travel destinations, leave reviews, and property owners can list their places. The application features user authentication, dynamic content management, and a clean UI using EJS templates.
+**TripNest** is a full-stack travel platform where users can discover travel destinations, leave reviews, and property owners can list their places. The application features user authentication, dynamic content management, and a clean UI using EJS templates.
 
 ---
 
@@ -40,8 +40,8 @@
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/HarshitSuru/wanderlust.git
-   cd wanderlust
+   git clone https://github.com/HarshitSuru/TripNest.git
+   cd TripNest
 
 2. **Install dependencies**
    ```bash
