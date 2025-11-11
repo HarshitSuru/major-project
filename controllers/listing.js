@@ -109,12 +109,14 @@ module.exports.deleteListing = async (req, res) => {
 
 module.exports.showListing = async (req, res) => {
     let { id } = req.params;
-    const listing = await Listing.findById(id).populate({ path: "reviews", populate: { path: "author" } }).populate("owner");
+    const listing = await Listing.findById(id)
+        .populate({ path: "reviews", populate: { path: "author" } })
+        .populate("owner");
     if (!listing) {
         req.flash("error", "Couldn't find the given listing");
-        res.redirect("/listings");
+        return res.redirect("/listings");   // <--- return added
     }
-    res.render("listings/show", { listing });
+    return res.render("listings/show", { listing });
 }
 
 // New controller function for handling search
